@@ -1,13 +1,13 @@
 [
   {
-    "id": 1,
-    "name": "Forest Spirit",
-    "material": "Walnut Wood",
-    "price": 8500,
-    "category": "landscape",
-    "tag": "Featured",
-    "description": "A serene forest scene hand-carved into rich walnut wood.",
-    "img": "images/forest-spirit.jpg"
+    "id": 4,
+    "name": "Sarmad and horse",
+    "material": "pine",
+    "price": 8000,
+    "category": "portrait",
+    "tag": "",
+    "description": "sarmadddddd",
+    "img": "https://raw.githubusercontent.com/Sarmad2/Asif-wood-art/main/images/a7d19eb7-c8a6-4078-b613-dce3f9f8603f.png"
   },
   {
     "id": 2,
@@ -29,16 +29,7 @@
     "description": "Abstract geometric patterns burned and carved into pine.",
     "img": "images/geometric-flow.jpg"
   },
-  {
-    "id": 4,
-    "name": "Sarmad and horse",
-    "material": "pine",
-    "price": 8000,
-    "category": "portrait",
-    "tag": "",
-    "description": "sarmadddddd",
-    "img": "https://raw.githubusercontent.com/Sarmad2/Asif-wood-art/main/images/a7d19eb7-c8a6-4078-b613-dce3f9f8603f.png"
-  }
+
   {
   "hero": "https://raw.githubusercontent.com/.../images/photo.jpg"
   }
