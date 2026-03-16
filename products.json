@@ -1,14 +1,5 @@
 [
-  {
-    "id": 1,
-    "name": "Sarmad and horse",
-    "material": "pine",
-    "price": 8000,
-    "category": "portrait",
-    "tag": "",
-    "description": "sarmadddddd",
-    "img": "https://raw.githubusercontent.com/Sarmad2/Asif-wood-art/main/images/a7d19eb7-c8a6-4078-b613-dce3f9f8603f.png"
-  },
+  
   {
     "id": 2,
     "name": "sami sitting",
@@ -18,5 +9,15 @@
     "tag": "featured",
     "description": "sitting",
     "img": "https://raw.githubusercontent.com/Sarmad2/Asif-wood-art/main/images/4901a434-4884-47b7-a8bd-a7f7f58661f9.png"
+  }
+  {
+    "id": 1,
+    "name": "Sarmad and horse",
+    "material": "pine",
+    "price": 8000,
+    "category": "portrait",
+    "tag": "",
+    "description": "sarmadddddd",
+    "img": "https://raw.githubusercontent.com/Sarmad2/Asif-wood-art/main/images/a7d19eb7-c8a6-4078-b613-dce3f9f8603f.png"
   }
 ]
