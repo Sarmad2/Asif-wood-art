@@ -1,7 +1,7 @@
 [
   
   {
-    "id": 2,
+    "id": 1,
     "name": "sami sitting",
     "material": "pine",
     "price": 100000,
@@ -11,7 +11,7 @@
     "img": "https://raw.githubusercontent.com/Sarmad2/Asif-wood-art/main/images/4901a434-4884-47b7-a8bd-a7f7f58661f9.png"
   },
   {
-    "id": 1,
+    "id": 2,
     "name": "Sarmad and horse",
     "material": "pine",
     "price": 8000,
