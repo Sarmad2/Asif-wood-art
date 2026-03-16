@@ -1,0 +1,32 @@
+[
+  {
+    "id": 1,
+    "name": "Forest Spirit",
+    "material": "Walnut Wood",
+    "price": 8500,
+    "category": "landscape",
+    "tag": "Featured",
+    "description": "A serene forest scene hand-carved into rich walnut wood.",
+    "img": "images/forest-spirit.jpg"
+  },
+  {
+    "id": 2,
+    "name": "Elder Portrait",
+    "material": "Teak Wood",
+    "price": 12000,
+    "category": "portrait",
+    "tag": "Sold",
+    "description": "Detailed portrait carved with fine chisels on solid teak.",
+    "img": "images/elder-portrait.jpg"
+  },
+  {
+    "id": 3,
+    "name": "Geometric Flow",
+    "material": "Pine Wood",
+    "price": 6500,
+    "category": "decorative",
+    "tag": "",
+    "description": "Abstract geometric patterns burned and carved into pine.",
+    "img": "images/geometric-flow.jpg"
+  }
+]
