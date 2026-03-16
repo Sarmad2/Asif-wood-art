@@ -1,0 +1,1353 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Artisan Wood — Handcrafted Wood Art</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400&family=DM+Sans:wght@300;400;500&family=Cormorant+Garamond:ital,wght@0,300;1,300&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0e0b08;
+    --bg2: #161009;
+    --surface: #1c1409;
+    --surface2: #231a0e;
+    --wood: #8b5e2a;
+    --wood-light: #c4874a;
+    --gold: #d4a853;
+    --gold-light: #f0c878;
+    --cream: #f5ead8;
+    --cream-dim: #c9b89a;
+    --text: #f0e6d3;
+    --text-dim: #9a8a75;
+    --border: rgba(212,168,83,0.15);
+    --border-hover: rgba(212,168,83,0.4);
+    --radius: 4px;
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'DM Sans', sans-serif;
+    font-weight: 300;
+    overflow-x: hidden;
+  }
+
+  /* CUSTOM CURSOR */
+  .cursor {
+    position: fixed; top: 0; left: 0;
+    width: 10px; height: 10px;
+    background: var(--gold);
+    border-radius: 50%;
+    pointer-events: none;
+    z-index: 9999;
+    transition: transform 0.1s ease;
+    mix-blend-mode: difference;
+  }
+  .cursor-ring {
+    position: fixed; top: 0; left: 0;
+    width: 36px; height: 36px;
+    border: 1px solid var(--gold);
+    border-radius: 50%;
+    pointer-events: none;
+    z-index: 9998;
+    transition: transform 0.18s ease, width 0.3s, height 0.3s, opacity 0.3s;
+    opacity: 0.6;
+  }
+  .cursor-ring.hovering { width: 56px; height: 56px; opacity: 0.3; }
+
+  /* NOISE OVERLAY */
+  body::before {
+    content: '';
+    position: fixed; inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 512 512' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
+    pointer-events: none;
+    z-index: 1;
+    opacity: 0.6;
+  }
+
+  /* NAV */
+  nav {
+    position: fixed; top: 0; left: 0; right: 0;
+    z-index: 100;
+    padding: 24px 60px;
+    display: flex; align-items: center; justify-content: space-between;
+    background: linear-gradient(to bottom, rgba(14,11,8,0.95) 0%, transparent 100%);
+    backdrop-filter: blur(0px);
+    transition: backdrop-filter 0.4s, background 0.4s;
+  }
+  nav.scrolled {
+    backdrop-filter: blur(20px);
+    background: rgba(14,11,8,0.9);
+    border-bottom: 1px solid var(--border);
+  }
+  .logo {
+    font-family: 'Playfair Display', serif;
+    font-size: 22px; font-weight: 900;
+    color: var(--gold);
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    text-decoration: none;
+  }
+  .logo span { color: var(--cream); font-weight: 400; font-style: italic; font-size: 18px; }
+  .nav-links { display: flex; gap: 40px; list-style: none; }
+  .nav-links a {
+    color: var(--cream-dim); text-decoration: none;
+    font-size: 13px; letter-spacing: 2px; text-transform: uppercase;
+    transition: color 0.3s;
+    position: relative;
+  }
+  .nav-links a::after {
+    content: '';
+    position: absolute; bottom: -4px; left: 0; right: 0;
+    height: 1px; background: var(--gold);
+    transform: scaleX(0); transition: transform 0.3s;
+  }
+  .nav-links a:hover { color: var(--gold); }
+  .nav-links a:hover::after { transform: scaleX(1); }
+  .nav-cart {
+    display: flex; align-items: center; gap: 8px;
+    color: var(--cream-dim); font-size: 13px; letter-spacing: 1px;
+    cursor: pointer; transition: color 0.3s;
+  }
+  .nav-cart:hover { color: var(--gold); }
+  .cart-count {
+    background: var(--gold); color: var(--bg);
+    width: 20px; height: 20px; border-radius: 50%;
+    font-size: 11px; font-weight: 500;
+    display: flex; align-items: center; justify-content: center;
+  }
+
+  /* HERO */
+  .hero {
+    min-height: 100vh;
+    display: flex; flex-direction: column;
+    position: relative; overflow: hidden;
+    padding-top: 120px;
+  }
+  .hero-bg {
+    position: absolute; inset: 0;
+    background:
+      radial-gradient(ellipse 80% 60% at 70% 50%, rgba(139,94,42,0.12) 0%, transparent 70%),
+      radial-gradient(ellipse 40% 40% at 20% 80%, rgba(212,168,83,0.06) 0%, transparent 60%),
+      linear-gradient(135deg, #0e0b08 0%, #161009 50%, #0e0b08 100%);
+  }
+  .hero-content {
+    position: relative; z-index: 2;
+    padding: 0 60px;
+    max-width: 700px;
+    margin-top: auto;
+    padding-bottom: 80px;
+  }
+  .hero-eyebrow {
+    font-size: 11px; letter-spacing: 5px; text-transform: uppercase;
+    color: var(--gold); margin-bottom: 28px;
+    display: flex; align-items: center; gap: 16px;
+    opacity: 0; animation: fadeUp 1s ease 0.3s forwards;
+  }
+  .hero-eyebrow::before {
+    content: ''; width: 40px; height: 1px; background: var(--gold);
+  }
+  .hero-title {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(52px, 7vw, 96px);
+    font-weight: 900; line-height: 0.95;
+    color: var(--cream);
+    margin-bottom: 32px;
+    opacity: 0; animation: fadeUp 1s ease 0.5s forwards;
+  }
+  .hero-title em {
+    font-style: italic; color: var(--gold);
+    font-weight: 400;
+  }
+  .hero-desc {
+    font-family: 'Cormorant Garamond', serif;
+    font-style: italic; font-size: 19px;
+    color: var(--cream-dim); line-height: 1.7;
+    max-width: 440px; margin-bottom: 48px;
+    opacity: 0; animation: fadeUp 1s ease 0.7s forwards;
+  }
+  .hero-actions {
+    display: flex; gap: 20px; align-items: center;
+    opacity: 0; animation: fadeUp 1s ease 0.9s forwards;
+  }
+  .btn-primary {
+    background: var(--gold);
+    color: var(--bg); border: none;
+    padding: 16px 40px; font-family: 'DM Sans', sans-serif;
+    font-size: 12px; letter-spacing: 3px; text-transform: uppercase;
+    cursor: pointer; transition: all 0.3s;
+    font-weight: 500; text-decoration: none;
+    display: inline-block;
+  }
+  .btn-primary:hover { background: var(--gold-light); transform: translateY(-2px); box-shadow: 0 8px 30px rgba(212,168,83,0.3); }
+  .btn-ghost {
+    color: var(--cream-dim); border: 1px solid var(--border);
+    padding: 16px 32px; font-size: 12px; letter-spacing: 3px; text-transform: uppercase;
+    cursor: pointer; transition: all 0.3s; background: transparent;
+    font-family: 'DM Sans', sans-serif; font-weight: 400; text-decoration: none;
+    display: inline-block;
+  }
+  .btn-ghost:hover { border-color: var(--gold); color: var(--gold); }
+
+  .hero-visual {
+    position: absolute; right: 0; top: 0; bottom: 0;
+    width: 55%;
+    opacity: 0; animation: fadeIn 1.5s ease 0.4s forwards;
+  }
+  .hero-visual-inner {
+    position: absolute; inset: 0;
+    background: linear-gradient(135deg, rgba(139,94,42,0.08) 0%, rgba(212,168,83,0.04) 100%);
+    display: flex; align-items: center; justify-content: center;
+  }
+  .hero-art-placeholder {
+    width: 420px; height: 560px;
+    border: 1px solid var(--border);
+    position: relative; overflow: hidden;
+    background: var(--surface);
+  }
+  .hero-art-placeholder::before {
+    content: 'FEATURED\nWORK';
+    position: absolute; inset: 0;
+    display: flex; align-items: center; justify-content: center;
+    font-family: 'Playfair Display', serif;
+    font-size: 11px; letter-spacing: 8px;
+    color: var(--text-dim); text-align: center;
+    white-space: pre-line; line-height: 3;
+  }
+  .hero-art-placeholder img {
+    width: 100%; height: 100%; object-fit: cover;
+    opacity: 0.85;
+  }
+  .hero-scroll {
+    position: absolute; bottom: 40px; right: 60px;
+    display: flex; flex-direction: column; align-items: center; gap: 12px;
+    opacity: 0; animation: fadeIn 1s ease 1.5s forwards;
+  }
+  .hero-scroll span {
+    font-size: 10px; letter-spacing: 4px; text-transform: uppercase;
+    color: var(--text-dim); writing-mode: vertical-rl;
+  }
+  .scroll-line {
+    width: 1px; height: 60px; background: linear-gradient(to bottom, var(--gold), transparent);
+    animation: scrollLine 2s ease infinite;
+  }
+
+  /* MARQUEE */
+  .marquee-section {
+    padding: 24px 0;
+    border-top: 1px solid var(--border);
+    border-bottom: 1px solid var(--border);
+    overflow: hidden;
+    background: var(--surface);
+    position: relative; z-index: 2;
+  }
+  .marquee-track {
+    display: flex; gap: 0;
+    animation: marquee 20s linear infinite;
+    white-space: nowrap;
+  }
+  .marquee-item {
+    padding: 0 48px;
+    font-family: 'Playfair Display', serif;
+    font-size: 13px; font-style: italic;
+    color: var(--text-dim); letter-spacing: 2px;
+    flex-shrink: 0;
+  }
+  .marquee-dot {
+    color: var(--gold); margin: 0 4px;
+  }
+
+  /* SECTION HEADER */
+  .section-header {
+    text-align: center; margin-bottom: 72px;
+  }
+  .section-label {
+    font-size: 10px; letter-spacing: 6px; text-transform: uppercase;
+    color: var(--gold); margin-bottom: 16px; display: block;
+  }
+  .section-title {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(36px, 4vw, 56px);
+    font-weight: 700; color: var(--cream);
+    line-height: 1.1;
+  }
+  .section-title em { font-style: italic; color: var(--gold); font-weight: 400; }
+  .section-line {
+    width: 60px; height: 1px; background: var(--gold);
+    margin: 24px auto 0;
+  }
+
+  /* PRODUCTS SECTION */
+  .products-section {
+    padding: 120px 60px;
+    position: relative;
+  }
+
+  /* FILTER TABS */
+  .filter-tabs {
+    display: flex; gap: 4px; justify-content: center; margin-bottom: 56px;
+    flex-wrap: wrap;
+  }
+  .filter-tab {
+    padding: 10px 28px; background: transparent;
+    border: 1px solid var(--border); color: var(--text-dim);
+    font-family: 'DM Sans', sans-serif; font-size: 11px;
+    letter-spacing: 2px; text-transform: uppercase;
+    cursor: pointer; transition: all 0.3s;
+  }
+  .filter-tab:hover, .filter-tab.active {
+    background: var(--gold); color: var(--bg); border-color: var(--gold);
+  }
+
+  /* PRODUCT GRID */
+  .product-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 2px;
+    margin-bottom: 60px;
+  }
+  .product-card {
+    background: var(--surface);
+    position: relative; overflow: hidden;
+    cursor: pointer;
+    transition: transform 0.4s ease;
+  }
+  .product-card:hover { transform: translateY(-4px); }
+  .product-card:nth-child(3n+1) { grid-row: span 1; }
+  .product-card:nth-child(5) { grid-column: span 2; }
+  .product-img {
+    aspect-ratio: 3/4; overflow: hidden;
+    background: var(--surface2);
+    position: relative;
+  }
+  .product-card:nth-child(5) .product-img { aspect-ratio: 16/7; }
+  .product-img-inner {
+    width: 100%; height: 100%;
+    background: linear-gradient(135deg, var(--surface2) 0%, var(--surface) 100%);
+    display: flex; align-items: center; justify-content: center;
+    transition: transform 0.6s ease;
+    position: relative;
+  }
+  .product-card:hover .product-img-inner { transform: scale(1.04); }
+  .product-img-inner img {
+    width: 100%; height: 100%; object-fit: cover;
+    opacity: 0.9; transition: opacity 0.4s;
+  }
+  .product-card:hover .product-img-inner img { opacity: 1; }
+  .product-placeholder-label {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 13px; font-style: italic; color: var(--text-dim);
+    letter-spacing: 2px; text-align: center; padding: 20px;
+  }
+  .product-overlay {
+    position: absolute; inset: 0;
+    background: rgba(14,11,8,0.7);
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    gap: 16px; opacity: 0; transition: opacity 0.4s;
+  }
+  .product-card:hover .product-overlay { opacity: 1; }
+  .product-tag {
+    position: absolute; top: 16px; left: 16px;
+    background: var(--gold); color: var(--bg);
+    font-size: 9px; letter-spacing: 2px; text-transform: uppercase;
+    padding: 4px 12px; font-weight: 500;
+  }
+  .product-info {
+    padding: 20px 24px;
+    border-top: 1px solid var(--border);
+    display: flex; justify-content: space-between; align-items: flex-end;
+  }
+  .product-name {
+    font-family: 'Playfair Display', serif;
+    font-size: 18px; color: var(--cream);
+    margin-bottom: 6px;
+  }
+  .product-material {
+    font-size: 11px; letter-spacing: 2px; text-transform: uppercase;
+    color: var(--text-dim);
+  }
+  .product-price {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 22px; color: var(--gold);
+    font-style: italic;
+  }
+
+  /* ADD TO CART BTN */
+  .add-to-cart {
+    background: var(--gold); color: var(--bg);
+    border: none; padding: 12px 28px;
+    font-size: 11px; letter-spacing: 2px; text-transform: uppercase;
+    cursor: pointer; font-family: 'DM Sans', sans-serif;
+    font-weight: 500; transition: all 0.3s;
+  }
+  .add-to-cart:hover { background: var(--gold-light); }
+  .contact-btn {
+    background: transparent; color: var(--cream);
+    border: 1px solid rgba(255,255,255,0.3); padding: 12px 24px;
+    font-size: 11px; letter-spacing: 2px; text-transform: uppercase;
+    cursor: pointer; font-family: 'DM Sans', sans-serif;
+    transition: all 0.3s;
+  }
+  .contact-btn:hover { border-color: var(--gold); color: var(--gold); }
+
+  /* ABOUT / CRAFT SECTION */
+  .craft-section {
+    padding: 120px 60px;
+    display: grid; grid-template-columns: 1fr 1fr;
+    gap: 100px; align-items: center;
+    background: var(--surface);
+    border-top: 1px solid var(--border);
+    border-bottom: 1px solid var(--border);
+  }
+  .craft-visual {
+    position: relative;
+  }
+  .craft-img-wrap {
+    aspect-ratio: 3/4;
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    position: relative; overflow: hidden;
+  }
+  .craft-img-wrap img {
+    width: 100%; height: 100%; object-fit: cover;
+    opacity: 0.85;
+  }
+  .craft-badge {
+    position: absolute; bottom: -24px; right: -24px;
+    width: 140px; height: 140px;
+    background: var(--gold);
+    border-radius: 50%;
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    gap: 2px;
+  }
+  .craft-badge-num {
+    font-family: 'Playfair Display', serif;
+    font-size: 36px; font-weight: 900; color: var(--bg); line-height: 1;
+  }
+  .craft-badge-text {
+    font-size: 9px; letter-spacing: 2px; text-transform: uppercase;
+    color: var(--bg); font-weight: 500; text-align: center; padding: 0 16px;
+  }
+  .craft-text .section-header { text-align: left; }
+  .craft-text .section-line { margin: 24px 0 0; }
+  .craft-body {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 19px; font-style: italic;
+    color: var(--cream-dim); line-height: 1.8;
+    margin-top: 32px;
+  }
+  .craft-stats {
+    display: grid; grid-template-columns: 1fr 1fr; gap: 32px;
+    margin-top: 48px; padding-top: 48px;
+    border-top: 1px solid var(--border);
+  }
+  .craft-stat-num {
+    font-family: 'Playfair Display', serif;
+    font-size: 42px; font-weight: 700; color: var(--gold);
+    line-height: 1;
+  }
+  .craft-stat-label {
+    font-size: 11px; letter-spacing: 2px; text-transform: uppercase;
+    color: var(--text-dim); margin-top: 8px;
+  }
+
+  /* PROCESS SECTION */
+  .process-section {
+    padding: 120px 60px;
+  }
+  .process-steps {
+    display: grid; grid-template-columns: repeat(4, 1fr);
+    gap: 2px; margin-top: 72px;
+  }
+  .process-step {
+    background: var(--surface);
+    padding: 40px 32px;
+    border: 1px solid var(--border);
+    transition: border-color 0.3s, background 0.3s;
+    position: relative;
+  }
+  .process-step:hover {
+    border-color: var(--gold);
+    background: var(--surface2);
+  }
+  .step-num {
+    font-family: 'Playfair Display', serif;
+    font-size: 64px; font-weight: 900;
+    color: rgba(212,168,83,0.1);
+    line-height: 1; margin-bottom: 24px;
+    transition: color 0.3s;
+  }
+  .process-step:hover .step-num { color: rgba(212,168,83,0.2); }
+  .step-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 20px; color: var(--cream); margin-bottom: 12px;
+  }
+  .step-desc {
+    font-size: 14px; color: var(--text-dim); line-height: 1.7;
+  }
+
+  /* CONTACT SECTION */
+  .contact-section {
+    padding: 120px 60px;
+    background: var(--surface);
+    border-top: 1px solid var(--border);
+    display: grid; grid-template-columns: 1fr 1fr;
+    gap: 100px; align-items: start;
+  }
+  .contact-info .section-header { text-align: left; }
+  .contact-info .section-line { margin: 24px 0 0; }
+  .contact-desc {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 18px; font-style: italic;
+    color: var(--cream-dim); line-height: 1.8;
+    margin-top: 32px;
+  }
+  .contact-details { margin-top: 48px; display: flex; flex-direction: column; gap: 24px; }
+  .contact-detail {
+    display: flex; gap: 20px; align-items: flex-start;
+  }
+  .contact-detail-icon {
+    width: 40px; height: 40px; border: 1px solid var(--border);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 16px; flex-shrink: 0;
+  }
+  .contact-detail-label {
+    font-size: 10px; letter-spacing: 3px; text-transform: uppercase;
+    color: var(--gold); margin-bottom: 4px;
+  }
+  .contact-detail-val {
+    font-size: 15px; color: var(--cream-dim);
+  }
+  .contact-form {
+    background: var(--bg);
+    padding: 48px; border: 1px solid var(--border);
+  }
+  .form-group { margin-bottom: 24px; }
+  .form-label {
+    font-size: 10px; letter-spacing: 3px; text-transform: uppercase;
+    color: var(--text-dim); display: block; margin-bottom: 8px;
+  }
+  .form-input {
+    width: 100%; background: var(--surface);
+    border: 1px solid var(--border); color: var(--cream);
+    padding: 14px 16px; font-family: 'DM Sans', sans-serif;
+    font-size: 14px; outline: none; transition: border-color 0.3s;
+  }
+  .form-input:focus { border-color: var(--gold); }
+  .form-input::placeholder { color: var(--text-dim); }
+  textarea.form-input { resize: vertical; min-height: 120px; }
+
+  /* CART SIDEBAR */
+  .cart-sidebar {
+    position: fixed; top: 0; right: 0; bottom: 0;
+    width: 400px; background: var(--bg2);
+    border-left: 1px solid var(--border);
+    z-index: 200; transform: translateX(100%);
+    transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+    display: flex; flex-direction: column;
+    padding: 40px;
+  }
+  .cart-sidebar.open { transform: translateX(0); }
+  .cart-overlay {
+    position: fixed; inset: 0;
+    background: rgba(0,0,0,0.6); z-index: 199;
+    opacity: 0; pointer-events: none; transition: opacity 0.4s;
+  }
+  .cart-overlay.visible { opacity: 1; pointer-events: all; }
+  .cart-header {
+    display: flex; justify-content: space-between; align-items: center;
+    margin-bottom: 40px;
+  }
+  .cart-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 24px; color: var(--cream);
+  }
+  .cart-close {
+    width: 40px; height: 40px; border: 1px solid var(--border);
+    background: none; color: var(--cream-dim);
+    cursor: pointer; font-size: 18px; transition: all 0.3s;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .cart-close:hover { border-color: var(--gold); color: var(--gold); }
+  .cart-items { flex: 1; overflow-y: auto; }
+  .cart-item {
+    display: flex; gap: 16px;
+    padding: 20px 0; border-bottom: 1px solid var(--border);
+  }
+  .cart-item-img {
+    width: 72px; height: 90px; background: var(--surface);
+    flex-shrink: 0; overflow: hidden;
+  }
+  .cart-item-img img { width: 100%; height: 100%; object-fit: cover; }
+  .cart-item-name {
+    font-family: 'Playfair Display', serif;
+    font-size: 16px; color: var(--cream); margin-bottom: 6px;
+  }
+  .cart-item-price {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 18px; font-style: italic; color: var(--gold);
+  }
+  .cart-item-remove {
+    background: none; border: none; color: var(--text-dim);
+    cursor: pointer; font-size: 12px; margin-left: auto;
+    transition: color 0.3s; align-self: flex-start;
+  }
+  .cart-item-remove:hover { color: var(--gold); }
+  .cart-footer { padding-top: 32px; }
+  .cart-total {
+    display: flex; justify-content: space-between;
+    margin-bottom: 24px; padding-bottom: 24px;
+    border-bottom: 1px solid var(--border);
+  }
+  .cart-total-label {
+    font-size: 11px; letter-spacing: 3px; text-transform: uppercase; color: var(--text-dim);
+  }
+  .cart-total-val {
+    font-family: 'Playfair Display', serif;
+    font-size: 28px; color: var(--gold);
+  }
+  .cart-note {
+    font-size: 12px; color: var(--text-dim); text-align: center;
+    margin-top: 12px; font-style: italic;
+  }
+
+  /* FOOTER */
+  footer {
+    padding: 80px 60px 40px;
+    border-top: 1px solid var(--border);
+    background: var(--bg);
+  }
+  .footer-top {
+    display: grid; grid-template-columns: 2fr 1fr 1fr 1fr;
+    gap: 60px; margin-bottom: 60px;
+  }
+  .footer-logo {
+    font-family: 'Playfair Display', serif;
+    font-size: 28px; font-weight: 900; color: var(--gold);
+    margin-bottom: 16px; display: block;
+  }
+  .footer-desc {
+    font-family: 'Cormorant Garamond', serif;
+    font-style: italic; color: var(--text-dim); font-size: 16px; line-height: 1.8;
+  }
+  .footer-col-title {
+    font-size: 10px; letter-spacing: 4px; text-transform: uppercase;
+    color: var(--gold); margin-bottom: 24px;
+  }
+  .footer-links { display: flex; flex-direction: column; gap: 12px; }
+  .footer-links a {
+    color: var(--text-dim); text-decoration: none; font-size: 14px;
+    transition: color 0.3s;
+  }
+  .footer-links a:hover { color: var(--gold); }
+  .footer-bottom {
+    display: flex; justify-content: space-between; align-items: center;
+    padding-top: 40px; border-top: 1px solid var(--border);
+    font-size: 12px; color: var(--text-dim);
+  }
+  .footer-owner-link {
+    color: var(--gold); text-decoration: none; font-size: 12px;
+    border: 1px solid var(--border); padding: 8px 20px;
+    letter-spacing: 2px; text-transform: uppercase;
+    transition: all 0.3s;
+  }
+  .footer-owner-link:hover { border-color: var(--gold); background: var(--gold); color: var(--bg); }
+
+  /* OWNER PANEL */
+  .owner-panel {
+    position: fixed; inset: 0; z-index: 300;
+    display: flex; align-items: center; justify-content: center;
+    background: rgba(0,0,0,0.85);
+    opacity: 0; pointer-events: none; transition: opacity 0.4s;
+  }
+  .owner-panel.open { opacity: 1; pointer-events: all; }
+  .owner-panel-box {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    padding: 56px; width: 560px; max-width: 90vw;
+    position: relative;
+    transform: translateY(20px); transition: transform 0.4s;
+  }
+  .owner-panel.open .owner-panel-box { transform: translateY(0); }
+  .owner-panel-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 28px; color: var(--gold); margin-bottom: 8px;
+  }
+  .owner-panel-sub {
+    font-size: 13px; color: var(--text-dim); margin-bottom: 40px;
+    letter-spacing: 1px;
+  }
+  .owner-action-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+  .owner-action {
+    background: var(--bg); border: 1px solid var(--border);
+    padding: 28px 24px; cursor: pointer;
+    transition: all 0.3s; text-align: left;
+    text-decoration: none; display: block;
+  }
+  .owner-action:hover { border-color: var(--gold); background: var(--surface2); }
+  .owner-action-icon { font-size: 28px; margin-bottom: 12px; }
+  .owner-action-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 16px; color: var(--cream); margin-bottom: 6px;
+  }
+  .owner-action-desc {
+    font-size: 12px; color: var(--text-dim); line-height: 1.6;
+  }
+  .owner-close {
+    position: absolute; top: 20px; right: 20px;
+    background: none; border: 1px solid var(--border);
+    color: var(--text-dim); width: 36px; height: 36px;
+    cursor: pointer; font-size: 16px;
+    display: flex; align-items: center; justify-content: center;
+    transition: all 0.3s;
+  }
+  .owner-close:hover { border-color: var(--gold); color: var(--gold); }
+
+  /* TOAST */
+  .toast {
+    position: fixed; bottom: 40px; left: 50%;
+    transform: translateX(-50%) translateY(20px);
+    background: var(--gold); color: var(--bg);
+    padding: 14px 32px; font-size: 12px; letter-spacing: 2px;
+    text-transform: uppercase; font-weight: 500;
+    opacity: 0; transition: all 0.4s;
+    z-index: 500; pointer-events: none;
+  }
+  .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+
+  @keyframes shake {
+    0%, 100% { transform: translateX(0) translateY(0); }
+    20% { transform: translateX(-10px) translateY(0); }
+    40% { transform: translateX(10px) translateY(0); }
+    60% { transform: translateX(-6px) translateY(0); }
+    80% { transform: translateX(6px) translateY(0); }
+  }
+
+  /* ANIMATIONS */
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(30px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  @keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+  }
+  @keyframes marquee {
+    from { transform: translateX(0); }
+    to { transform: translateX(-50%); }
+  }
+  @keyframes scrollLine {
+    0% { transform: scaleY(0); transform-origin: top; }
+    50% { transform: scaleY(1); transform-origin: top; }
+    51% { transform: scaleY(1); transform-origin: bottom; }
+    100% { transform: scaleY(0); transform-origin: bottom; }
+  }
+
+  /* SCROLL REVEAL */
+  .reveal {
+    opacity: 0; transform: translateY(40px);
+    transition: opacity 0.8s ease, transform 0.8s ease;
+  }
+  .reveal.visible { opacity: 1; transform: translateY(0); }
+
+  /* RESPONSIVE */
+  @media (max-width: 900px) {
+    nav { padding: 20px 24px; }
+    .nav-links { display: none; }
+    .hero-content { padding: 0 24px 80px; }
+    .hero-visual { display: none; }
+    .products-section, .craft-section, .process-section, .contact-section { padding: 80px 24px; }
+    .craft-section { grid-template-columns: 1fr; gap: 60px; }
+    .contact-section { grid-template-columns: 1fr; gap: 60px; }
+    .process-steps { grid-template-columns: 1fr 1fr; }
+    .footer-top { grid-template-columns: 1fr 1fr; gap: 40px; }
+    .cart-sidebar { width: 100%; }
+  }
+</style>
+</head>
+<body>
+
+<!-- Cursor -->
+<div class="cursor" id="cursor"></div>
+<div class="cursor-ring" id="cursorRing"></div>
+
+<!-- Cart Overlay -->
+<div class="cart-overlay" id="cartOverlay" onclick="closeCart()"></div>
+
+<!-- Cart Sidebar -->
+<div class="cart-sidebar" id="cartSidebar">
+  <div class="cart-header">
+    <div class="cart-title">Your Collection</div>
+    <button class="cart-close" onclick="closeCart()">✕</button>
+  </div>
+  <div class="cart-items" id="cartItems">
+    <div style="color: var(--text-dim); font-size: 14px; text-align: center; padding: 40px 0; font-family: 'Cormorant Garamond', serif; font-style: italic; font-size: 18px;">
+      Your cart is empty.<br>Explore our collection.
+    </div>
+  </div>
+  <div class="cart-footer">
+    <div class="cart-total">
+      <div class="cart-total-label">Total</div>
+      <div class="cart-total-val" id="cartTotal">PKR 0</div>
+    </div>
+    <button class="btn-primary" style="width:100%; text-align:center;" onclick="checkout()">
+      Request Order
+    </button>
+    <div class="cart-note">* Orders are confirmed via WhatsApp / Email</div>
+  </div>
+</div>
+
+<!-- NAV -->
+<nav id="mainNav">
+  <a class="logo" href="#">Artisan <span>Wood</span></a>
+  <ul class="nav-links">
+    <li><a href="#products">Gallery</a></li>
+    <li><a href="#craft">Craft</a></li>
+    <li><a href="#process">Process</a></li>
+    <li><a href="#contact">Contact</a></li>
+  </ul>
+  <div class="nav-cart" onclick="openCart()">
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+      <path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/>
+      <line x1="3" y1="6" x2="21" y2="6"/>
+      <path d="M16 10a4 4 0 01-8 0"/>
+    </svg>
+    <span>Cart</span>
+    <div class="cart-count" id="cartCount">0</div>
+  </div>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-bg"></div>
+  <div class="hero-content">
+    <div class="hero-eyebrow">Handcrafted Wood Art</div>
+    <h1 class="hero-title">
+      Where<br><em>Wood</em><br>Becomes<br>Art
+    </h1>
+    <p class="hero-desc">
+      Each piece is hand-carved, burned, or sculpted — a conversation between the artist and the grain of the wood.
+    </p>
+    <div class="hero-actions">
+      <a href="#products" class="btn-primary">Explore Gallery</a>
+      <a href="#contact" class="btn-ghost">Commission a Piece</a>
+    </div>
+  </div>
+  <div class="hero-visual">
+    <div class="hero-visual-inner">
+      <div class="hero-art-placeholder">
+        <img src="" alt="" id="heroImg" style="display:none"/>
+        <div class="product-placeholder-label" id="heroLabel">Featured Artwork</div>
+      </div>
+    </div>
+  </div>
+  <div class="hero-scroll">
+    <div class="scroll-line"></div>
+    <span>Scroll</span>
+  </div>
+</section>
+
+<!-- MARQUEE -->
+<div class="marquee-section">
+  <div class="marquee-track" id="marqueeTrack">
+    <span class="marquee-item">Hand Carved Portraits <span class="marquee-dot">✦</span></span>
+    <span class="marquee-item">Wood Burning Art <span class="marquee-dot">✦</span></span>
+    <span class="marquee-item">Custom Commissions <span class="marquee-dot">✦</span></span>
+    <span class="marquee-item">Sculptural Reliefs <span class="marquee-dot">✦</span></span>
+    <span class="marquee-item">Decorative Panels <span class="marquee-dot">✦</span></span>
+    <span class="marquee-item">Wall Art <span class="marquee-dot">✦</span></span>
+    <span class="marquee-item">Hand Carved Portraits <span class="marquee-dot">✦</span></span>
+    <span class="marquee-item">Wood Burning Art <span class="marquee-dot">✦</span></span>
+    <span class="marquee-item">Custom Commissions <span class="marquee-dot">✦</span></span>
+    <span class="marquee-item">Sculptural Reliefs <span class="marquee-dot">✦</span></span>
+    <span class="marquee-item">Decorative Panels <span class="marquee-dot">✦</span></span>
+    <span class="marquee-item">Wall Art <span class="marquee-dot">✦</span></span>
+  </div>
+</div>
+
+<!-- PRODUCTS -->
+<section class="products-section reveal" id="products">
+  <div class="section-header">
+    <span class="section-label">Our Collection</span>
+    <h2 class="section-title">Crafted with <em>Passion</em></h2>
+    <div class="section-line"></div>
+  </div>
+
+  <div class="filter-tabs">
+    <button class="filter-tab active" onclick="filterProducts('all', this)">All Works</button>
+    <button class="filter-tab" onclick="filterProducts('portrait', this)">Portraits</button>
+    <button class="filter-tab" onclick="filterProducts('landscape', this)">Landscapes</button>
+    <button class="filter-tab" onclick="filterProducts('decorative', this)">Decorative</button>
+    <button class="filter-tab" onclick="filterProducts('custom', this)">Custom</button>
+  </div>
+
+  <div class="product-grid" id="productGrid">
+    <!-- Products rendered by JS -->
+  </div>
+
+  <div style="text-align:center;">
+    <a href="#contact" class="btn-ghost">Commission Custom Art</a>
+  </div>
+</section>
+
+<!-- CRAFT SECTION -->
+<section class="craft-section" id="craft">
+  <div class="craft-visual reveal">
+    <div class="craft-img-wrap">
+      <img src="" alt="" id="craftImg" style="display:none"/>
+      <div style="width:100%;height:100%;display:flex;align-items:center;justify-content:center;background:var(--surface2);" id="craftPlaceholder">
+        <div style="text-align:center;color:var(--text-dim);font-family:'Cormorant Garamond',serif;font-style:italic;font-size:15px;">The Artist at Work</div>
+      </div>
+    </div>
+    <div class="craft-badge">
+      <div class="craft-badge-num">10+</div>
+      <div class="craft-badge-text">Years of Craft</div>
+    </div>
+  </div>
+  <div class="craft-text reveal">
+    <div class="section-header">
+      <span class="section-label">Our Story</span>
+      <h2 class="section-title">The Art of <em>Wood</em></h2>
+      <div class="section-line"></div>
+    </div>
+    <p class="craft-body">
+      Every piece begins as a raw slab of wood — rough, wild, full of hidden stories in its grain. Through patient hands and disciplined skill, each artwork emerges as a unique dialogue between the artist and nature's material.
+    </p>
+    <div class="craft-stats">
+      <div>
+        <div class="craft-stat-num">200+</div>
+        <div class="craft-stat-label">Pieces Created</div>
+      </div>
+      <div>
+        <div class="craft-stat-num">50+</div>
+        <div class="craft-stat-label">Happy Collectors</div>
+      </div>
+      <div>
+        <div class="craft-stat-num">100%</div>
+        <div class="craft-stat-label">Handcrafted</div>
+      </div>
+      <div>
+        <div class="craft-stat-num">∞</div>
+        <div class="craft-stat-label">Unique Designs</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PROCESS -->
+<section class="process-section" id="process">
+  <div class="section-header reveal">
+    <span class="section-label">How It's Made</span>
+    <h2 class="section-title">The <em>Process</em></h2>
+    <div class="section-line"></div>
+  </div>
+  <div class="process-steps">
+    <div class="process-step reveal">
+      <div class="step-num">01</div>
+      <div class="step-title">Wood Selection</div>
+      <div class="step-desc">Premium wood is hand-selected for grain quality, density, and natural character — each piece is unique.</div>
+    </div>
+    <div class="process-step reveal">
+      <div class="step-num">02</div>
+      <div class="step-title">Design Transfer</div>
+      <div class="step-desc">The design is carefully transferred onto the wood surface with precise measurements and artistic judgment.</div>
+    </div>
+    <div class="process-step reveal">
+      <div class="step-num">03</div>
+      <div class="step-title">Hand Carving</div>
+      <div class="step-desc">Using traditional tools, the artist sculpts depth and dimension into the wood — layer by patient layer.</div>
+    </div>
+    <div class="process-step reveal">
+      <div class="step-num">04</div>
+      <div class="step-title">Finishing</div>
+      <div class="step-desc">Each piece is sealed, polished, and finished to preserve the wood's natural beauty for generations.</div>
+    </div>
+  </div>
+</section>
+
+<!-- CONTACT -->
+<section class="contact-section reveal" id="contact">
+  <div class="contact-info">
+    <div class="section-header">
+      <span class="section-label">Get in Touch</span>
+      <h2 class="section-title">Commission <em>Your</em> Piece</h2>
+      <div class="section-line"></div>
+    </div>
+    <p class="contact-desc">
+      Each commission is a personal journey. Tell me about your vision — a portrait, a landscape, a memory — and together we'll bring it to life in wood.
+    </p>
+    <div class="contact-details">
+      <div class="contact-detail">
+        <div class="contact-detail-icon">✉</div>
+        <div>
+          <div class="contact-detail-label">Email</div>
+          <div class="contact-detail-val"><a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="036b666f6f6c436271776a70626d746c6c672d606c6e">[email&#160;protected]</a></div>
+        </div>
+      </div>
+      <div class="contact-detail">
+        <div class="contact-detail-icon">📱</div>
+        <div>
+          <div class="contact-detail-label">WhatsApp</div>
+          <div class="contact-detail-val">+92 300 0000000</div>
+        </div>
+      </div>
+      <div class="contact-detail">
+        <div class="contact-detail-icon">📍</div>
+        <div>
+          <div class="contact-detail-label">Location</div>
+          <div class="contact-detail-val">Karachi, Pakistan</div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="contact-form reveal">
+    <div style="font-family:'Playfair Display',serif; font-size:22px; color:var(--cream); margin-bottom:8px;">Send a Message</div>
+    <div style="font-size:12px; color:var(--text-dim); margin-bottom:32px; letter-spacing:1px;">We'll respond within 24 hours</div>
+    <div class="form-group">
+      <label class="form-label">Your Name</label>
+      <input class="form-input" type="text" placeholder="Full name" id="formName"/>
+    </div>
+    <div class="form-group">
+      <label class="form-label">Email</label>
+      <input class="form-input" type="email" placeholder="your@email.com" id="formEmail"/>
+    </div>
+    <div class="form-group">
+      <label class="form-label">Message</label>
+      <textarea class="form-input" placeholder="Describe your commission or ask a question..." id="formMessage"></textarea>
+    </div>
+    <button class="btn-primary" style="width:100%;" onclick="submitContact()">Send Message</button>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-top">
+    <div>
+      <span class="footer-logo">Artisan Wood</span>
+      <p class="footer-desc">
+        Handcrafted wood art from Karachi, Pakistan. Each piece is a unique creation — carved with patience, finished with love.
+      </p>
+    </div>
+    <div>
+      <div class="footer-col-title">Navigate</div>
+      <div class="footer-links">
+        <a href="#products">Gallery</a>
+        <a href="#craft">About</a>
+        <a href="#process">Process</a>
+        <a href="#contact">Contact</a>
+      </div>
+    </div>
+    <div>
+      <div class="footer-col-title">Collections</div>
+      <div class="footer-links">
+        <a href="#">Portraits</a>
+        <a href="#">Landscapes</a>
+        <a href="#">Decorative</a>
+        <a href="#">Custom Work</a>
+      </div>
+    </div>
+    <div>
+      <div class="footer-col-title">Connect</div>
+      <div class="footer-links">
+        <a href="#">Instagram</a>
+        <a href="#">Facebook</a>
+        <a href="#">WhatsApp</a>
+      </div>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <span>© 2025 Artisan Wood. All rights reserved.</span>
+    <!-- Hidden trigger: triple-click on copyright text opens password modal -->
+    <span id="secretTrigger" style="cursor:default; user-select:none;">© 2025 Artisan Wood</span>
+  </div>
+</footer>
+
+<!-- PASSWORD MODAL -->
+<div class="owner-panel" id="passwordModal">
+  <div class="owner-panel-box" style="max-width:400px; padding:48px;">
+    <button class="owner-close" onclick="closePasswordModal()">✕</button>
+    <div style="text-align:center; margin-bottom:32px;">
+      <div style="font-size:32px; margin-bottom:12px;">🔐</div>
+      <div class="owner-panel-title" style="font-size:22px;">Owner Access</div>
+      <div class="owner-panel-sub">Enter your password to continue</div>
+    </div>
+    <div class="form-group">
+      <input class="form-input" type="password" id="ownerPasswordInput"
+        placeholder="••••••••"
+        style="text-align:center; font-size:20px; letter-spacing:6px;"
+        onkeydown="if(event.key==='Enter') verifyPassword()"
+        autocomplete="off"/>
+    </div>
+    <div id="pwError" style="color:#c0392b; font-size:12px; text-align:center; margin-bottom:16px; letter-spacing:1px; display:none;">
+      Incorrect password. Try again.
+    </div>
+    <button class="btn-primary" style="width:100%;" onclick="verifyPassword()">Enter Portal</button>
+    <div style="font-size:11px; color:var(--text-dim); text-align:center; margin-top:16px; letter-spacing:1px;">
+      This portal is for the store owner only.
+    </div>
+  </div>
+</div>
+
+<!-- OWNER PANEL -->
+<div class="owner-panel" id="ownerPanel">
+  <div class="owner-panel-box">
+    <button class="owner-close" onclick="closeOwnerPanel()">✕</button>
+    <div class="owner-panel-title">Owner Portal</div>
+    <div class="owner-panel-sub">Manage your store content</div>
+    <div class="owner-action-grid">
+      <a class="owner-action" href="https://forms.gle/YOUR_FORM_ID" target="_blank">
+        <div class="owner-action-icon">➕</div>
+        <div class="owner-action-title">Add New Art</div>
+        <div class="owner-action-desc">Submit a new artwork via Google Form. It will appear on the website automatically.</div>
+      </a>
+      <a class="owner-action" href="https://docs.google.com/spreadsheets/d/YOUR_SHEET_ID" target="_blank">
+        <div class="owner-action-icon">📋</div>
+        <div class="owner-action-title">View All Products</div>
+        <div class="owner-action-desc">See all products in your Google Sheet database.</div>
+      </a>
+      <a class="owner-action" href="/cdn-cgi/l/email-protection#5b34293f3e29281b3a292f32283a352c34343f75383436">
+        <div class="owner-action-icon">📦</div>
+        <div class="owner-action-title">View Orders</div>
+        <div class="owner-action-desc">Check customer order requests in your inbox.</div>
+      </a>
+      <a class="owner-action" href="https://wa.me/923000000000">
+        <div class="owner-action-icon">💬</div>
+        <div class="owner-action-title">WhatsApp</div>
+        <div class="owner-action-desc">Open WhatsApp to respond to customer inquiries.</div>
+      </a>
+    </div>
+    <div style="margin-top:28px; padding-top:24px; border-top:1px solid var(--border); font-size:12px; color:var(--text-dim); line-height:1.7;">
+      <strong style="color:var(--gold);">How to add products:</strong> Fill the Google Form → Artwork appears automatically on the website within minutes. Only you have access to this portal.
+    </div>
+  </div>
+</div>
+
+<!-- TOAST -->
+<div class="toast" id="toast"></div>
+
+<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
+// ============================================================
+// GITHUB CONFIG — apna username aur repo name yahan daalo
+// ============================================================
+const GITHUB_USERNAME = 'YOUR_USERNAME';   // e.g. 'sarmad-dev'
+const GITHUB_REPO     = 'YOUR_REPO_NAME'; // e.g. 'woodart-store'
+// ============================================================
+
+const PRODUCTS_URL = `https://raw.githubusercontent.com/${GITHUB_USERNAME}/${GITHUB_REPO}/main/products.json`;
+
+const DEMO_PRODUCTS = [
+  { id: 1, name: 'Forest Spirit',   material: 'Walnut Wood', price: 8500,  category: 'landscape',  tag: 'Featured', img: '' },
+  { id: 2, name: 'Elder Portrait',  material: 'Teak Wood',   price: 12000, category: 'portrait',   tag: 'Sold',     img: '' },
+  { id: 3, name: 'Geometric Flow',  material: 'Pine Wood',   price: 6500,  category: 'decorative', tag: '',         img: '' },
+  { id: 4, name: 'Mountain Memory', material: 'Oak Wood',    price: 15000, category: 'landscape',  tag: 'New',      img: '' },
+  { id: 5, name: 'Abstract Bloom',  material: 'Cedar Wood',  price: 18000, category: 'decorative', tag: 'Featured', img: '' },
+  { id: 6, name: 'Family Legacy',   material: 'Walnut Wood', price: 22000, category: 'portrait',   tag: '',         img: '' },
+];
+
+let products = [...DEMO_PRODUCTS];
+let cart = [];
+let activeFilter = 'all';
+
+async function loadProductsFromSheet() {
+  try {
+    const res = await fetch(PRODUCTS_URL + '?t=' + Date.now());
+    if (!res.ok) throw new Error('fetch failed');
+    const data = await res.json();
+    if (Array.isArray(data) && data.length > 0) {
+      products = data;
+      renderProducts();
+    }
+  } catch (e) {
+    console.log('GitHub fetch failed — using demo products');
+  }
+}
+
+function renderProducts() {
+  const grid = document.getElementById('productGrid');
+  const filtered = activeFilter === 'all' ? products : products.filter(p => p.category === activeFilter);
+  grid.innerHTML = filtered.map(p => `
+    <div class="product-card" data-category="${p.category}">
+      <div class="product-img">
+        <div class="product-img-inner">
+          ${p.img ? `<img src="${p.img}" alt="${p.name}" onerror="this.style.display='none'"/>` : ''}
+          <div class="product-placeholder-label">${p.img ? '' : p.name}</div>
+        </div>
+        ${p.tag && p.tag !== 'Sold' ? `<div class="product-tag">${p.tag}</div>` : ''}
+        ${p.tag === 'Sold' ? `<div class="product-tag" style="background:var(--text-dim)">Sold</div>` : ''}
+        <div class="product-overlay">
+          ${p.tag !== 'Sold' ? `<button class="add-to-cart" onclick="addToCart(${p.id})">Add to Cart</button>` : ''}
+          <button class="contact-btn" onclick="window.location='#contact'">Inquire</button>
+        </div>
+      </div>
+      <div class="product-info">
+        <div>
+          <div class="product-name">${p.name}</div>
+          <div class="product-material">${p.material}</div>
+        </div>
+        <div class="product-price">PKR ${p.price.toLocaleString()}</div>
+      </div>
+    </div>
+  `).join('');
+}
+
+function filterProducts(cat, el) {
+  activeFilter = cat;
+  document.querySelectorAll('.filter-tab').forEach(t => t.classList.remove('active'));
+  el.classList.add('active');
+  renderProducts();
+}
+
+function addToCart(id) {
+  const product = products.find(p => p.id === id);
+  if (!product) return;
+  const existing = cart.find(i => i.id === id);
+  if (existing) { existing.qty++; } else { cart.push({ ...product, qty: 1 }); }
+  updateCart();
+  showToast(`"${product.name}" added to collection`);
+  openCart();
+}
+
+function updateCart() {
+  const count = cart.reduce((a, i) => a + i.qty, 0);
+  document.getElementById('cartCount').textContent = count;
+  const total = cart.reduce((a, i) => a + i.price * i.qty, 0);
+  document.getElementById('cartTotal').textContent = `PKR ${total.toLocaleString()}`;
+  const itemsEl = document.getElementById('cartItems');
+  if (cart.length === 0) {
+    itemsEl.innerHTML = `<div style="color:var(--text-dim);text-align:center;padding:40px 0;font-family:'Cormorant Garamond',serif;font-style:italic;font-size:18px;">Your cart is empty.<br>Explore our collection.</div>`;
+    return;
+  }
+  itemsEl.innerHTML = cart.map(i => `
+    <div class="cart-item">
+      <div class="cart-item-img">
+        ${i.img ? `<img src="${i.img}" alt="${i.name}"/>` : `<div style="width:100%;height:100%;background:var(--surface2);display:flex;align-items:center;justify-content:center;font-size:10px;color:var(--text-dim);">${i.name[0]}</div>`}
+      </div>
+      <div>
+        <div class="cart-item-name">${i.name}</div>
+        <div style="font-size:12px;color:var(--text-dim);margin-bottom:8px;">${i.material}</div>
+        <div class="cart-item-price">PKR ${(i.price * i.qty).toLocaleString()}</div>
+        ${i.qty > 1 ? `<div style="font-size:11px;color:var(--text-dim);margin-top:4px;">Qty: ${i.qty}</div>` : ''}
+      </div>
+      <button class="cart-item-remove" onclick="removeFromCart(${i.id})">✕</button>
+    </div>
+  `).join('');
+}
+
+function removeFromCart(id) {
+  cart = cart.filter(i => i.id !== id);
+  updateCart();
+}
+
+function openCart() {
+  document.getElementById('cartSidebar').classList.add('open');
+  document.getElementById('cartOverlay').classList.add('visible');
+}
+function closeCart() {
+  document.getElementById('cartSidebar').classList.remove('open');
+  document.getElementById('cartOverlay').classList.remove('visible');
+}
+
+function checkout() {
+  if (cart.length === 0) { showToast('Your cart is empty'); return; }
+  const items = cart.map(i => `${i.name} (PKR ${i.price.toLocaleString()})`).join(', ');
+  const total = cart.reduce((a, i) => a + i.price * i.qty, 0);
+  const msg = `Hello! I'd like to order: ${items}. Total: PKR ${total.toLocaleString()}`;
+  window.open(`https://wa.me/923000000000?text=${encodeURIComponent(msg)}`, '_blank');
+}
+
+function submitContact() {
+  const name = document.getElementById('formName').value;
+  const email = document.getElementById('formEmail').value;
+  const msg = document.getElementById('formMessage').value;
+  if (!name || !email || !msg) { showToast('Please fill all fields'); return; }
+  const waMsg = `Name: ${name}\nEmail: ${email}\nMessage: ${msg}`;
+  window.open(`https://wa.me/923000000000?text=${encodeURIComponent(waMsg)}`, '_blank');
+  showToast('Opening WhatsApp...');
+}
+
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 3000);
+}
+
+// === SECRET TRIGGER: triple-click on copyright text ===
+const OWNER_PASSWORD = 'wood2025'; // <-- Change this to your own password!
+let clickCount = 0, clickTimer = null;
+
+document.getElementById('secretTrigger').addEventListener('click', function() {
+  clickCount++;
+  if (clickTimer) clearTimeout(clickTimer);
+  clickTimer = setTimeout(() => { clickCount = 0; }, 600);
+  if (clickCount >= 3) {
+    clickCount = 0;
+    openPasswordModal();
+  }
+});
+
+function openPasswordModal() {
+  document.getElementById('passwordModal').classList.add('open');
+  document.getElementById('ownerPasswordInput').value = '';
+  document.getElementById('pwError').style.display = 'none';
+  setTimeout(() => document.getElementById('ownerPasswordInput').focus(), 300);
+}
+function closePasswordModal() {
+  document.getElementById('passwordModal').classList.remove('open');
+  document.getElementById('ownerPasswordInput').value = '';
+  document.getElementById('pwError').style.display = 'none';
+}
+document.getElementById('passwordModal').addEventListener('click', function(e) {
+  if (e.target === this) closePasswordModal();
+});
+
+function verifyPassword() {
+  const input = document.getElementById('ownerPasswordInput').value;
+  if (input === OWNER_PASSWORD) {
+    closePasswordModal();
+    setTimeout(() => {
+      document.getElementById('ownerPanel').classList.add('open');
+    }, 200);
+  } else {
+    document.getElementById('pwError').style.display = 'block';
+    document.getElementById('ownerPasswordInput').value = '';
+    document.getElementById('ownerPasswordInput').focus();
+    // shake animation
+    const box = document.querySelector('#passwordModal .owner-panel-box');
+    box.style.animation = 'shake 0.4s ease';
+    setTimeout(() => box.style.animation = '', 400);
+  }
+}
+
+function openOwnerPanel() {
+  document.getElementById('ownerPanel').classList.add('open');
+}
+function closeOwnerPanel() {
+  document.getElementById('ownerPanel').classList.remove('open');
+}
+document.getElementById('ownerPanel').addEventListener('click', function(e) {
+  if (e.target === this) closeOwnerPanel();
+});
+
+// NAV SCROLL
+window.addEventListener('scroll', () => {
+  document.getElementById('mainNav').classList.toggle('scrolled', window.scrollY > 50);
+});
+
+// SCROLL REVEAL
+const revealEls = document.querySelectorAll('.reveal');
+const obs = new IntersectionObserver(entries => {
+  entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('visible'); obs.unobserve(e.target); } });
+}, { threshold: 0.1 });
+revealEls.forEach(el => obs.observe(el));
+
+// INIT — load products on page load
+renderProducts();
+loadProductsFromSheet();
+</script>
+</body>
+</html>
