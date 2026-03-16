@@ -1160,9 +1160,25 @@ async function loadProductsFromSheet() {
     if (Array.isArray(data) && data.length > 0) {
       products = data;
       renderProducts();
+      // Set hero image from first product automatically
+      setHeroImage(data[0]);
     }
   } catch (e) {
     console.log('GitHub fetch failed — using demo products');
+  }
+}
+
+function setHeroImage(product) {
+  if (!product) return;
+  const img = document.getElementById('heroImg');
+  const label = document.getElementById('heroLabel');
+  if (product.img) {
+    img.src = product.img;
+    img.style.display = 'block';
+    img.alt = product.name;
+    if (label) label.style.display = 'none';
+  } else {
+    if (label) label.textContent = product.name;
   }
 }
 
